@@ -1,5 +1,6 @@
 import json
 import qrcode
+import os
 import textwrap
 from PIL import Image
 from PIL import ImageDraw
@@ -50,7 +51,9 @@ template = environment.get_template("dna.jinja")
 # Load database
 SAMPLE_SPREADSHEET_ID = "14pMt-_vrcE-Ki1b1txAZ_bRt3XTNqOr8TezFtef99yk"
 
-gc = gspread.api_key("AIzaSyDTyI-uXJVFjG9_E0P8zreEZovTcgn7Y1Q")
+API_KEY = os.environ.get("GOOGLE_API_KEY")
+
+gc = gspread.api_key(API_KEY)
 sh = gc.open_by_key(SAMPLE_SPREADSHEET_ID)
 
 worksheet = sh.sheet1
