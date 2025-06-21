@@ -11,26 +11,40 @@ import gspread
 
 import argparse
 
-def generate_page(data,template):
+def generate_page(data,name,template):
 
-    output_path = "test" + ".html"
+    output_path = name + ".html"
+    qr_path = "qr/" + name + ".png"
+    url = "https://iracooke.github.io/openday/" + output_path
+
 
     # Generate and write HTML
-    html_content = template.render(data[0])
+    html_content = template.render(data)
     with open(output_path, "w") as f:
         f.write(html_content)
 
     print(f"HTML file generated: {output_path}")
 
-    img = qrcode.make('https://iracooke.github.io/openday/sepia_esculenta.html')
+
+    img = qrcode.make(url)
     print(type(img))  # qrcode.image.pil.PilImage
-    img.save("qr/sepia_esculenta_front.png")
+    img.save(qr_path)
 
-# img = Image.new('RGB', (410, 410),(255, 255, 255))
-# d = ImageDraw.Draw(img)
-# d.text((20, 20), data['sequence'], fill=(0, 0, 0),font_size=20)
+def read_fasta(fp):
+    name, seq = None, []
+    for line in fp:
+        line = line.rstrip()
+        if line.startswith(">"):
+            if name: yield (name, ''.join(seq))
+            name, seq = line[1:], []
+        else:
+            seq.append(line)
+    if name: yield (name, ''.join(seq))
 
-# img.save("qr/sepia_esculenta_back.png")
+
+# Load the template
+environment = Environment(loader=FileSystemLoader("templates/"))
+template = environment.get_template("dna.jinja")
 
 
 # Load database
@@ -42,6 +56,25 @@ sh = gc.open_by_key(SAMPLE_SPREADSHEET_ID)
 worksheet = sh.sheet1
 data = worksheet.get_all_records()
 
-# Load the template
-environment = Environment(loader=FileSystemLoader("templates/"))
-template = environment.get_template("dna.jinja")
+def noname(d):
+    d.pop("name")
+    return(d)
+
+ddict = { d['name']:noname(d) for d in data }
+
+
+
+
+for name,page_data in ddict.items():
+#    import pdb;pdb.set_trace();
+
+    ff = page_data['fasta']
+    fd = [f for f in read_fasta(open(ff,'r'))]
+    header,seq = fd[0]
+
+    page_data['sequence'] = seq
+
+    generate_page(page_data,name,template)
+
+
+
