@@ -4,12 +4,7 @@
     <meta charset="UTF-8">
     <title>{{ title }}</title>
     <style>
-/*        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            line-height: 1.6;
-        }
-*/        
+
         body {
             font-family: 'Nunito', sans-serif;
             margin: 40px;
@@ -17,23 +12,6 @@
             color: #333;
             line-height: 1.6;
         }
-
-
-        /*img {
-            max-width: 400px;
-            height: auto;
-            display: block;
-            margin-bottom: 20px;
-        }*/
- /*       .sequence {
-            font-family: monospace;
-            white-space: normal;
-            word-wrap: break-word;    
-            overflow-wrap: break-word;
-            background-color: #f4f4f4;
-            padding: 10px;
-            border-left: 4px solid #ccc;
-        }  */
 
         .section {
             background-color: #f9f9f9;
@@ -89,6 +67,26 @@
       color: #444;
     }
 
+    .image-container {
+  max-width: 1000px;
+  margin: 1rem auto;
+  text-align: center;
+}
+
+.image-container img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+.attribution {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 0.5rem;
+}
+
+
     </style>
 </head>
 <body>
@@ -104,8 +102,12 @@
     
     <div class="section">
         <h3>Organism: {{ common_name }} (<i>{{ species_name }}</i>)</h3>
-        <img src="{{ image }}" alt="{{ common_name }}">
-
+        <div class="image-container">
+            <img src="{{ image }}" alt="{{ common_name }}">
+            <p class="attribution">Image by {{ image_attribution }}</p>
+        </div>
+    </div>
+    <div class="section">
         <p>{{ info }}</p>
         <p>{{ research }}</p>
     </div>
